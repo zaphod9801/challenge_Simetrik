@@ -63,12 +63,18 @@ class IncidentDetectionAgent:
         }}
 
         **Severity Rules**:
-        - **URGENT**: >1 urgent incident OR >3 total incidents.
+        - **URGENT**: 
+            - >1 urgent incident OR >3 total incidents.
+            - **CRITICAL**: If volume drops by > 50% compared to expected (CV/Last Week), this is URGENT.
+            - **CRITICAL**: If multiple expected file categories are missing, this is URGENT.
+            - **CRITICAL**: If NO files are received (Total Outage) when expected, this is URGENT.
         - **ATTENTION_REQUIRED**: At least 1 incident.
         - **ALL_GOOD**: No incidents.
 
         **Important**:
         - Be strict but reasonable.
+        - **Volume Drops**: A drop from ~40 files to ~7 files is a MAJOR incident (URGENT).
+        - **Total Outage**: 0 files = URGENT.
         - Use the provided stats in CV to judge volume variations.
         - Return ONLY valid JSON.
         """
