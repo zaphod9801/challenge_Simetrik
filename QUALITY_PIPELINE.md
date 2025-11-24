@@ -45,18 +45,25 @@ El pipeline de calidad se ejecutó en dos iteraciones principales:
 
 ## 3. Cómo Ejecutar la Evaluación
 
-El script de evaluación automatiza este proceso:
+El script de evaluación automatiza este proceso y soporta ambas implementaciones:
 
 ```bash
-python3 -m src.evaluation
+# Evaluar agente original (GenAI Direct)
+python3 -m src.evaluation --agent-type genai
+
+# Evaluar nuevo agente (Google ADK)
+python3 -m src.evaluation --agent-type adk
 ```
 
 Este script:
 1. Carga los datos del día de prueba.
-2. Ejecuta el agente sobre las fuentes etiquetadas.
+2. Ejecuta el agente seleccionado sobre las fuentes etiquetadas.
 3. Compara la salida con el `GROUND_TRUTH`.
 4. Imprime la tabla de confusión y las métricas finales.
 
-## 4. Recomendaciones Futuras
+## 4. Comparativa de Rendimiento
+Ambas implementaciones utilizan el mismo modelo subyacente (`gemini-flash-latest`) y el mismo prompt optimizado, por lo que se espera un rendimiento similar (F1 Score ~1.00). La diferencia radica en la arquitectura de software (Direct vs Agentic Framework).
+
+## 5. Recomendaciones Futuras
 - **Ampliar el Dataset**: Incorporar más días de feedback para evitar sobreajuste (overfitting) al día 10.
 - **Human-in-the-loop**: Implementar un mecanismo para que los analistas validen las alertas diarias y retroalimenten el sistema automáticamente.

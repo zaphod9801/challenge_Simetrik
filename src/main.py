@@ -12,6 +12,7 @@ def main():
     parser.add_argument("--date", type=str, required=True, help="Date to process (YYYY-MM-DD)")
     parser.add_argument("--data-dir", type=str, default="data", help="Path to data directory")
     parser.add_argument("--limit", type=int, default=None, help="Limit number of sources to process")
+    parser.add_argument("--agent-type", type=str, default="genai", choices=["genai", "adk"], help="Agent implementation to use (genai or adk)")
     args = parser.parse_args()
 
     # Check API Key
@@ -68,8 +69,18 @@ def main():
         if cv:
             cvs[source_id] = cv
 
-    # 2. Run GenAI Agent
-    agent = IncidentDetectionAgent(api_key=api_key)
+    # Initialize Agent
+    if args.agent_type == "adk":
+        from .agent_google_adk import ADKIncidentAgent
+        print("Using Google ADK Agent...")
+        agent = ADKIncidentAgent(api_key=api_key)
+    else:
+        from .agent_adk import IncidentDetectionAgent
+        print("Using GenAI Direct Agent...")
+        agent = IncidentDetectionAgent(api_key=api_key)
+
+    # Load Data
+    print(f"Loading data for {args.date}...")
     context = {"date": current_date}
     
     report = agent.generate_global_report(args.date, files_data, last_week_files_data, cvs, context)

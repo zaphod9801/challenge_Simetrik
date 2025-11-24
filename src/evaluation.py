@@ -16,8 +16,8 @@ GROUND_TRUTH = {
     "195385": IncidentSeverity.URGENT,
 }
 
-def evaluate_agent(date_str: str, data_dir: str):
-    print(f"Starting Evaluation for {date_str}...")
+def evaluate_agent(date_str: str, data_dir: str, agent_type: str = "genai"):
+    print(f"Starting Evaluation for {date_str} using {agent_type} agent...")
     
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
@@ -44,7 +44,13 @@ def evaluate_agent(date_str: str, data_dir: str):
     print(f"Evaluating {len(eval_sources)} sources: {eval_sources}")
 
     # 2. Run Agent
-    agent = IncidentDetectionAgent(api_key=api_key)
+    if agent_type == "adk":
+        from .agent_google_adk import ADKIncidentAgent
+        agent = ADKIncidentAgent(api_key=api_key)
+    else:
+        from .agent_adk import IncidentDetectionAgent
+        agent = IncidentDetectionAgent(api_key=api_key)
+
     context = {"date": datetime.strptime(date_str, "%Y-%m-%d")}
     
     # We need to run generation manually here to see progress if we want, 
@@ -101,4 +107,8 @@ def evaluate_agent(date_str: str, data_dir: str):
     return f1
 
 if __name__ == "__main__":
-    evaluate_agent("2025-09-10", "data")
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--agent-type", default="genai", choices=["genai", "adk"])
+    args = parser.parse_args()
+    evaluate_agent("2025-09-10", "data", args.agent_type)

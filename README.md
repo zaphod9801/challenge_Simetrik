@@ -53,12 +53,16 @@ python3 -m src.main --date YYYY-MM-DD [OPTIONS]
 ### Arguments
 - `--date`: The date to analyze in `YYYY-MM-DD` format (Required).
 - `--data-dir`: Path to the data directory (Default: `data`).
-- `--limit`: Limit the number of sources to process (Optional, useful for testing or avoiding rate limits).
+- `--limit`: Limit the number of sources to process (Optional).
+- `--agent-type`: Choose the agent implementation: `genai` (default) or `adk`.
 
 ### Example
 ```bash
-# Run for September 12, 2025, limiting to 5 sources
+# Run with default GenAI agent
 python3 -m src.main --date 2025-09-12 --limit 5
+
+# Run with Google ADK agent
+python3 -m src.main --date 2025-09-12 --limit 5 --agent-type adk
 ```
 
 ## Inputs
@@ -74,7 +78,8 @@ The agent outputs an **Executive Report** to the console, including:
 3. **Recommendations**: AI-generated actions for critical issues.
 
 ## Architecture
-- **`src/agent_adk.py`**: Core logic using Google Gemini to analyze data.
+- **`src/agent_adk.py`**: Implementation using `google-generativeai` direct client.
+- **`src/agent_google_adk.py`**: Implementation using `google-adk` library (Agent, Runner).
 - **`src/input_preparer.py`**: Parses raw JSON and Markdown data into structured objects.
 - **`src/models.py`**: Pydantic models for type safety.
 - **`src/main.py`**: CLI entry point.
